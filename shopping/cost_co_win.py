@@ -26,6 +26,8 @@ from selenium.webdriver.common.alert import Alert
 from selenium.webdriver.common.keys import Keys     # need to send keystrokes, checkbox
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.ui import Select    # for drop downmenu
+from selenium.webdriver.common.by import By
+
 import time 
 import sys            # for commnad argument 
 import getopt         # for commnad argument 
@@ -33,7 +35,9 @@ import telepot
 token = '1111:aaaa' # bot API token
 mc = 'telegram_ID' # telegram_ID in number
 bot = telepot.Bot(token) 
-driver = webdriver.Chrome('C:\\Util\\chromedriver_win32\\chromedriver.exe')
+#driver = webdriver.Chrome('C:\\Util\\chromedriver_win32\\chromedriver.exe')
+#driver = webdriver.Chrome('/opt/homebrew/bin/chromedriver')
+driver = webdriver.Chrome()
 
 # get arguments 
 #total   = len(sys.argv)
@@ -76,14 +80,14 @@ mode = 5
 
 if(mode==1 or mode==4 or mode==5):
     # step 1. login 
-    my_id = 'costco_ID'
-    my_pw = 'costco_password'
+    my_id = 'costco_ID'        # replace your ID here
+    my_pw = 'costco_password'  # replace your password here
     url_login = 'https://www.costco.co.kr/login' 
     driver.get(url_login)
     driver.implicitly_wait(5)
-    driver.find_element_by_xpath("//input[@name='j_username']").send_keys(my_id) # id 
-    driver.find_element_by_xpath("//input[@name='j_password']").send_keys(my_pw) # pw
-    driver.find_element_by_xpath("//button[@id='loginSubmit']").click() # click login button
+    driver.find_element("xpath", "//input[@name='j_username']").send_keys(my_id) # id 
+    driver.find_element("xpath", "//input[@name='j_password']").send_keys(my_pw) # pw
+    driver.find_element("xpath", "//button[@id='loginSubmit']").click() # click login button
     driver.implicitly_wait(5)
     # step 2. purchase
     # BudaeJjigae
@@ -106,7 +110,7 @@ if(mode==1 or mode==4 or mode==5):
     iter = 0 
     while( element ):
         try: 
-            element = driver.find_element_by_class_name('error-page-title')
+            element = driver.find_element(By.CLASS_NAME, 'error-page-title')
             print("costco welkeeps mask sold out. refreshing:", iter)
             driver.refresh()
             time.sleep(5)
