@@ -6,6 +6,16 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 import subprocess
 import os
+import time 
+import sys            # for commnad argument 
+import getopt         # for commnad argument 
+import telepot
+import yaml
+
+conf = yaml.load(open('config.yaml'), Loader=yaml.FullLoader)
+username = conf['site_info']['username']
+password = conf['site_info']['password']
+inputurl = conf['site_info']['url2']
 
 chrome_command_macos = [
     "open",
@@ -22,17 +32,13 @@ driverPath = ChromeDriverManager().install()
 subprocess.Popen(chrome_command_macos)
 options = Options()
 options.add_argument("--start-maximized")
+options.add_argument('no-startup-window')
 options.add_experimental_option("debuggerAddress", "localhost:9089")
 service = Service(executable_path=driverPath)
-driver = webdriver.Chrome(service=service,options=options)
+print("starting driver...")
+#driver = webdriver.Chrome(service=service,options=options)
+driver = webdriver.Chrome()
 
-import os
-import yaml
-
-conf = yaml.load(open('config.yaml'), Loader=yaml.FullLoader)
-username = conf['site_info']['username']
-password = conf['site_info']['password']
-inputurl = conf['site_info']['url2']
 
 
 def startBot(username, password, url):
@@ -43,10 +49,8 @@ def startBot(username, password, url):
     # find the id or name or class of
     # username by inspecting on username input
     #driver.find_element(By.ID, "login_username").send_keys(username)
-    #driver.findElement(By.ID("login_username")).send_keys(username)
-    driver.find_element(By.XPATH, "//input[@name='login_username']").send_keys(username) # id 
-
-    # find the password by inspecting on password input
+    driver.find_element(By.XPATH, "//input[@id='login_username']").send_keys(username)
+    #driver.find_element(By.XPATH, "//input[@id='login_password']").send_keys(password)
     driver.find_element(By.ID, "login_password").send_keys(password)
 
     # click on submit
@@ -55,7 +59,15 @@ def startBot(username, password, url):
     #driver.find_element_by_css_selector("login_click").click()
     #driver.find_element_by_css_selector("submit").click()
     #driver.find_element_by_css_selector("Login-form-button").click()
-    login.click()
+    driver.find_element(By.XPATH, "//button[@type='submit']").click() # click login button
+
+    element = 1
+    iter = 0
+    while(element): 
+       element = driver.find_element(By.CLASS_NAME, 'ant-checkbox-input').click()
+       driver.find_element(By.XPATH, "//button[@type='button']").click()
+       time.sleep(100)
+
 
 # Call the function
 print(username, password, inputurl)
